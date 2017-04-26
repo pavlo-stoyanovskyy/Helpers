@@ -1,0 +1,20 @@
+--Query to get current connections
+SELECT 
+	sp.[spid],
+	sp.[status],
+	sp.[loginame],
+	sp.[hostname],
+	sp.[blocked] [blk_by],
+	sd.[name] [db_name], 
+	sp.[cmd] [command],
+	sp.[cpu] [cpu_time],
+	sp.[physical_io] [disk_io],
+	sp.[last_batch],
+	sp.[program_name]
+FROM master.dbo.sysprocesses sp 
+JOIN master.dbo.sysdatabases sd ON 
+	sp.dbid = sd.dbid
+WHERE 
+	sd.name like '%MyDatabaseName%'
+ORDER BY 
+	last_batch 
