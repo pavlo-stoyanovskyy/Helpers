@@ -1,0 +1,5 @@
+$ErrorActionPreference = "Stop"
+$sourceFolder = "c://test/source"
+$backupFolder = "c://test/backup"
+Remove-Item $backupFolder\* -Recurse -Force
+Copy-Item -Path $sourceFolder\* -Destination $backupFolder -Recurse -Force
