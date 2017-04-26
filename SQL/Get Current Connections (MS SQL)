@@ -17,4 +17,4 @@ JOIN master.dbo.sysdatabases sd ON
 WHERE 
 	sd.name like '%MyDatabaseName%'
 ORDER BY 
-	last_batch 
+	sp.last_batch 
