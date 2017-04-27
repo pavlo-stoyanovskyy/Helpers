@@ -1,0 +1,9 @@
+$ErrorActionPreference = "Stop"
+
+$sourceFolder = "C:\inetpub\biopeople.idp"
+$baseBackupFolder = "C:\inetpub\!BACKUP_FOLDER\biopeople.idp"
+
+$backupFolder = New-Item -Path "$baseBackupFolder\bkp_$(((Get-Date).ToUniversalTime()).ToString("yyyyMMddThhmmssZ"))" -Force -ItemType Directory
+
+
+Copy-Item -Path $sourceFolder\* -Destination $backupFolder -Recurse -Force
