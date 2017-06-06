@@ -1,0 +1,20 @@
+select 
+	CASE DATEPART(DW, OperationDate)
+		WHEN 1 THEN 'Sun'
+		WHEN 2 THEN 'Mon'
+		WHEN 3 THEN 'Tue'
+		WHEN 4 THEN 'Wed'
+		WHEN 5 THEN 'Thu'
+		WHEN 6 THEN 'Fri'
+		WHEN 7 THEN 'Sat'
+	END,
+	avg(*) / 3 -- 3 weeks
+from Audit (nolock)
+where 
+	OperationDate >= '2017-05-8 00:00:00.000' and 
+	OperationDate < '2017-05-29 00:00:00.000' and 
+	URL like '%/api/auth/SSO/saml/login%'
+group by 
+	DATEPART(DW, OperationDate)
+order by
+	DATEPART(DW, OperationDate)
