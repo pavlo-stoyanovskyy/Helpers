@@ -1,0 +1,6 @@
+INSERT [dbo].[LabExceptionStatus] ([LabExceptionStatusID], [Name], [CreatedByLoadID]) VALUES (1, N'Open', NULL)
+GO
+INSERT [dbo].[LabExceptionStatus] ([LabExceptionStatusID], [Name], [CreatedByLoadID]) VALUES (2, N'Resolved', NULL)
+GO
+INSERT [dbo].[LabExceptionStatus] ([LabExceptionStatusID], [Name], [CreatedByLoadID]) VALUES (3, N'Closed', NULL)
+GO
