@@ -1,0 +1,70 @@
+    class Program
+    {
+        private static HttpClient _httpClient;
+        static Program()
+        {
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/xml"));
+        }
+        static void Main(string[] args)
+        {
+            var writer = new StreamWriter(new FileStream("./Results.txt", FileMode.OpenOrCreate, FileAccess.Write))
+            {
+                AutoFlush = true
+            };
+            Console.SetOut(writer);
+            var results = new List<(HttpStatusCode StatusCode, string TransactionId, TimeSpan Elapsed)>();
+            for (int i = 0; i < 1000; i++)
+            {
+                var sentTime = DateTime.Now;
+                var result = CallAPI();
+                Console.WriteLine($"Call #{i+1}, SentTime {sentTime.ToLongTimeString()}, Status {result.StatusCode}, TransactionId {result.TransactionId}, Elapsed {result.Elapsed.Seconds} sec");
+                results.Add(result);
+                if (results.Count % 10 == 0)
+                {
+                    Console.WriteLine($"Avg Elapsed {results.Sum(_ => _.Elapsed.TotalMilliseconds) / results.Count / 1000} sec");
+                }
+                Thread.Sleep(60000);
+            }
+            writer.Close();
+            Console.ReadKey();
+        }
+        static (HttpStatusCode StatusCode, string TransactionId, TimeSpan Elapsed) CallAPI()
+        {
+            var sw = new Stopwatch();
+            var content = @"";
+            var httpContent = new StringContent(content, System.Text.Encoding.UTF8, "application/xml");
+            sw.Start();
+            var httpResponseTask = _httpClient.PostAsync("http://internal-AcxiomAPI-Test-328762473.us-east-1.elb.amazonaws.com/Vendor/Acxiom/v1", httpContent);
+            httpResponseTask.Wait();
+            var httpResponse = httpResponseTask.Result;
+            sw.Stop();
+            var responseTask = httpResponse.Content.ReadAsStringAsync();
+            responseTask.Wait();
+            var response = responseTask.Result;
+            var transactionId = "";
+            using (var reader = new StringReader(response))
+            {
+                //var result =
+                //    (UnsuccessfulResponseModel)new XmlSerializer(typeof(UnsuccessfulResponseModel)).Deserialize(reader);
+                //transactionId = result.TransactionId;
+                var result =
+                    (V1Response)new XmlSerializer(typeof(V1Response)).Deserialize(reader);
+                transactionId = result.Header.TransactionId;
+            }
+            return (StatusCode: httpResponse.StatusCode, TransactionId: transactionId, Elapsed: sw.Elapsed);
+        }
+    }
+    public class UnsuccessfulResponseModel
+    {
+        public string TransactionId { get; set; }
+    }
+    public class V1Response
+    {
+        public Header Header { get; set; }
+    }
+    public class Header
+    {
+        public string TransactionId { get; set; }
+    }
