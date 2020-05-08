@@ -36,7 +36,7 @@
             var content = @"";
             var httpContent = new StringContent(content, System.Text.Encoding.UTF8, "application/xml");
             sw.Start();
-            var httpResponseTask = _httpClient.PostAsync("http://internal-AcxiomAPI-Test-328762473.us-east-1.elb.amazonaws.com/Vendor/Acxiom/v1", httpContent);
+            var httpResponseTask = _httpClient.PostAsync("http://yoururl.com/v1", httpContent);
             httpResponseTask.Wait();
             var httpResponse = httpResponseTask.Result;
             sw.Stop();
